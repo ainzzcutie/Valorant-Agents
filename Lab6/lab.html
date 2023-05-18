@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant Agents</title>
+    <link rel="shortcut icon" href="Valorant-Emblem.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.cdnfonts.com/css/valorant" rel="stylesheet">
+</head>
+<body>
+  <div id="title">Valorant Agents</div>
+  <div id="container">
+    <!-- cards will be added here -->
+  </div>
+  <div class="button-container">
+    <button onclick="prevSlide()">Prev</button>
+    <button onclick="nextSlide()">Next</button>
+  </div>
+</body>
+<script>
+  let slideIndex = 1;
+  fetchData();
+
+  function prevSlide() {
+    showSlides(slideIndex -= 1);
+  }
+
+  function nextSlide() {
+    showSlides(slideIndex += 1);
+  }
+
+  function showSlides(index) {
+    let i;
+    let slides = document.getElementsByClassName("mySlides");
+    
+    // reset slide index if we've reached the end or beginning
+    if (index > slides.length) {
+      slideIndex = 1;
+    }
+    if (index < 1) {
+      slideIndex = slides.length;
+    }
+
+    // hide all slides
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+
+    // show the current slide
+    slides[slideIndex-1].style.display = "block";
+  }
+
+  function fetchData() {
+    fetch('https://valorant-api.com/v1/agents')
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        for (let i = 0; i < data.data.length; i++) {
+          if (data.data[i].role == null) {
+            continue;
+          } else {
+            let name = data.data[i].displayName;
+            let role = data.data[i].role.displayName;
+            let roleIcon = data.data[i].role.displayIcon;
+            let portrait = data.data[i].fullPortrait; 
+            let ability1 = data.data[i].abilities[0].displayName;
+            let ability1Icon = data.data[i].abilities[0].displayIcon;
+            let ability2 = data.data[i].abilities[1].displayName;
+            let ability2Icon = data.data[i].abilities[1].displayIcon;
+            let ability3 = data.data[i].abilities[2].displayName;
+            let ability3Icon = data.data[i].abilities[2].displayIcon;
+            let ability4 = data.data[i].abilities[3].displayName;
+            let ability4Icon = data.data[i].abilities[3].displayIcon;
+  
+            let container = document.getElementById("container");
+            let card = document.createElement("div");
+            card.classList.add("mySlides");
+            card.innerHTML = `
+                <img src="${portrait}" class="agent-icon">
+                <div class="content-container">
+                  <h3>${name}</h3><br>
+                  <div class="role-container">
+                    <img src="${roleIcon}">
+                    <span>${role}</span>
+                  </div>
+                  <h2>Abilities</h2>        
+                  <ul>
+                      <li><img src="${ability1Icon}" class="ability-icon">${ability1}</li>
+                      <li><img src="${ability2Icon}" class="ability-icon">${ability2}</li>
+                      <li><img src="${ability3Icon}" class="ability-icon">${ability3}</li>
+                      <li><img src="${ability4Icon}" class="ability-icon">${ability4}</li>
+                  </ul>
+                </div>
+            `;
+            container.appendChild(card);
+          }
+        }
+        showSlides(slideIndex);
+      })
+    }
+</script>
+</html>
